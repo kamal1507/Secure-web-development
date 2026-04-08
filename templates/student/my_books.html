@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}My Books - Library MS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>My Issued Books</h2>
+</div>
+
+{% if records %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Book</th>
+            <th>Author</th>
+            <th>Request Date</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in records %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ record.book.title }}</td>
+            <td>{{ record.book.author }}</td>
+            <td>{{ record.issue_date.strftime('%d %b %Y') }}</td>
+            <td>
+                <span class="badge badge-{{ record.status }}">
+                    {{ record.status.replace('_', ' ').title() }}
+                </span>
+            </td>
+            <td>
+                {% if record.status == 'issued' %}
+                    <!-- Student can request return -->
+                    <form method="POST"
+                          action="{{ url_for('student.return_book', record_id=record.id) }}"
+                          style="display:inline;"
+                          onsubmit="return confirm('Request to return this book?')">
+                        <button type="submit" class="btn btn-sm btn-warning">Return</button>
+                    </form>
+                {% elif record.status == 'pending' %}
+                    <span class="text-muted">Awaiting Approval</span>
+                {% elif record.status == 'return_requested' %}
+                    <span class="text-muted">Return Pending</span>
+                {% elif record.status == 'returned' %}
+                    <span class="text-muted">Returned on {{ record.return_date.strftime('%d %b %Y') if record.return_date else '—' }}</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <p>You haven't issued any books yet.</p>
+    <a href="{{ url_for('student.browse_books') }}" class="btn btn-primary">Browse Books</a>
+</div>
+{% endif %}
+{% endblock %}

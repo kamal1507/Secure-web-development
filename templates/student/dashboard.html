@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard - Library MS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Welcome, {{ current_user.name }}!</h2>
+    <p>Here's a quick overview of your library activity.</p>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">📖</div>
+        <div class="stat-number">{{ my_issued }}</div>
+        <div class="stat-label">Books Currently Issued</div>
+    </div>
+    <div class="stat-card stat-highlight">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-number">{{ my_pending }}</div>
+        <div class="stat-label">Pending Requests</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-number">{{ my_returned }}</div>
+        <div class="stat-label">Books Returned</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📚</div>
+        <div class="stat-number">{{ total_available }}</div>
+        <div class="stat-label">Books Available in Library</div>
+    </div>
+</div>
+
+<!-- Quick Links -->
+<div class="quick-actions">
+    <h3>What would you like to do?</h3>
+    <div class="action-buttons">
+        <a href="{{ url_for('student.browse_books') }}" class="btn btn-primary">Browse Books</a>
+        <a href="{{ url_for('student.my_books') }}" class="btn btn-secondary">My Issued Books</a>
+        <a href="{{ url_for('student.profile') }}" class="btn btn-secondary">My Profile</a>
+    </div>
+</div>
+{% endblock %}

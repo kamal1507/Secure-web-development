@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Browse Books - Library MS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Browse Books</h2>
+</div>
+
+<!-- Search and Filter Form -->
+<div class="search-bar">
+    <form method="GET" action="{{ url_for('student.browse_books') }}">
+        <input type="text" name="q" value="{{ search }}"
+               placeholder="Search by title, author, or category..." id="searchInput">
+        <select name="category">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+            <option value="{{ cat }}" {% if category == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Search</button>
+        {% if search or category %}
+        <a href="{{ url_for('student.browse_books') }}" class="btn btn-secondary">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Results count -->
+{% if search or category %}
+<p class="result-info">Found <strong>{{ books|length }}</strong> book(s)
+    {% if search %}for "{{ search }}"{% endif %}
+    {% if category %}in {{ category }}{% endif %}
+</p>
+{% endif %}
+
+<!-- Books Table -->
+{% if books %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Category</th>
+            <th>Availability</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td><strong>{{ book.title }}</strong></td>
+            <td>{{ book.author }}</td>
+            <td>{{ book.category }}</td>
+            <td>
+                {% if book.available_copies > 0 %}
+                    <span class="badge badge-available">Available ({{ book.available_copies }})</span>
+                {% else %}
+                    <span class="badge badge-unavailable">Not Available</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if book.id in my_pending_books %}
+                    <!-- Already requested -->
+                    <span class="badge badge-issued">Requested</span>
+                {% elif book.available_copies > 0 %}
+                    <!-- Request form -->
+                    <form method="POST" action="{{ url_for('student.issue_book', book_id=book.id) }}"
+                          style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-primary">Request</button>
+                    </form>
+                {% else %}
+                    <span class="text-muted">Unavailable</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <p>No books found. {% if search or category %}Try a different search.{% else %}The library is empty.{% endif %}</p>
+</div>
+{% endif %}
+{% endblock %}

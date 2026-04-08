@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - Library MS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Admin Dashboard</h2>
+    <p>Welcome back, {{ current_user.name }}!</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">📚</div>
+        <div class="stat-number">{{ total_books }}</div>
+        <div class="stat-label">Total Books</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">🎓</div>
+        <div class="stat-number">{{ total_students }}</div>
+        <div class="stat-label">Registered Students</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📖</div>
+        <div class="stat-number">{{ total_issued }}</div>
+        <div class="stat-label">Currently Issued</div>
+    </div>
+    <div class="stat-card stat-highlight">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-number">{{ pending_requests }}</div>
+        <div class="stat-label">Pending Requests</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-number">{{ total_returned }}</div>
+        <div class="stat-label">Books Returned</div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions">
+    <h3>Quick Actions</h3>
+    <div class="action-buttons">
+        <a href="{{ url_for('admin.add_book') }}" class="btn btn-primary">+ Add New Book</a>
+        <a href="{{ url_for('admin.issued_books') }}?status=pending" class="btn btn-warning">View Pending Requests</a>
+        <a href="{{ url_for('admin.issued_books') }}" class="btn btn-secondary">All Issue Records</a>
+    </div>
+</div>
+
+<!-- Recent Issue Activity -->
+<div class="section">
+    <h3>Recent Activity</h3>
+    {% if recent_issues %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Book</th>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in recent_issues %}
+            <tr>
+                <td>{{ record.user.name }}</td>
+                <td>{{ record.book.title }}</td>
+                <td>{{ record.issue_date.strftime('%d %b %Y') }}</td>
+                <td>
+                    <span class="badge badge-{{ record.status }}">{{ record.status }}</span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty-msg">No activity yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

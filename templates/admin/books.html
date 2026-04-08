@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Manage Books - Library MS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>All Books</h2>
+    <a href="{{ url_for('admin.add_book') }}" class="btn btn-primary">+ Add New Book</a>
+</div>
+
+{% if books %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Category</th>
+            <th>ISBN</th>
+            <th>Total</th>
+            <th>Available</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td>{{ book.category }}</td>
+            <td>{{ book.isbn or '—' }}</td>
+            <td>{{ book.total_copies }}</td>
+            <td>
+                {% if book.available_copies > 0 %}
+                    <span class="badge badge-available">{{ book.available_copies }}</span>
+                {% else %}
+                    <span class="badge badge-unavailable">0</span>
+                {% endif %}
+            </td>
+            <td class="action-cell">
+                <a href="{{ url_for('admin.edit_book', book_id=book.id) }}" class="btn btn-sm btn-secondary">Edit</a>
+
+                <!-- Delete form with confirmation -->
+                <form method="POST" action="{{ url_for('admin.delete_book', book_id=book.id) }}"
+                      style="display:inline;" onsubmit="return confirmDelete('{{ book.title }}')">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <p>No books in the library yet.</p>
+    <a href="{{ url_for('admin.add_book') }}" class="btn btn-primary">Add Your First Book</a>
+</div>
+{% endif %}
+{% endblock %}

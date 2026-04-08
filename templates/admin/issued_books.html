@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Issued Books - Library MS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Issue Records</h2>
+</div>
+
+<!-- Filter tabs -->
+<div class="filter-tabs">
+    <a href="?status=all" class="tab {% if status_filter == 'all' %}active{% endif %}">All</a>
+    <a href="?status=pending" class="tab {% if status_filter == 'pending' %}active{% endif %}">Pending</a>
+    <a href="?status=issued" class="tab {% if status_filter == 'issued' %}active{% endif %}">Issued</a>
+    <a href="?status=return_requested" class="tab {% if status_filter == 'return_requested' %}active{% endif %}">Return Requests</a>
+    <a href="?status=returned" class="tab {% if status_filter == 'returned' %}active{% endif %}">Returned</a>
+</div>
+
+{% if records %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Student</th>
+            <th>Book</th>
+            <th>Request Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in records %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>
+                {{ record.user.name }}<br>
+                <small class="text-muted">{{ record.user.email }}</small>
+            </td>
+            <td>
+                {{ record.book.title }}<br>
+                <small class="text-muted">by {{ record.book.author }}</small>
+            </td>
+            <td>{{ record.issue_date.strftime('%d %b %Y') }}</td>
+            <td>
+                <span class="badge badge-{{ record.status }}">
+                    {{ record.status.replace('_', ' ').title() }}
+                </span>
+            </td>
+            <td class="action-cell">
+                {% if record.status == 'pending' %}
+                    <!-- Approve request -->
+                    <form method="POST" action="{{ url_for('admin.approve_issue', record_id=record.id) }}"
+                          style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                    </form>
+                    <!-- Reject request -->
+                    <form method="POST" action="{{ url_for('admin.reject_issue', record_id=record.id) }}"
+                          style="display:inline;"
+                          onsubmit="return confirm('Reject this request?')">
+                        <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                    </form>
+
+                {% elif record.status == 'return_requested' %}
+                    <!-- Confirm return -->
+                    <form method="POST" action="{{ url_for('admin.confirm_return', record_id=record.id) }}"
+                          style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-success">Confirm Return</button>
+                    </form>
+
+                {% else %}
+                    <span class="text-muted">—</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <p>No records found for this filter.</p>
+</div>
+{% endif %}
+{% endblock %}

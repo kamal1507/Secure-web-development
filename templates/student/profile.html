@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}My Profile - Library MS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>My Profile</h2>
+</div>
+
+<div class="profile-card">
+
+    <!-- Basic Info -->
+    <div class="profile-info">
+        <div class="profile-avatar">
+            {{ current_user.name[0].upper() }}
+        </div>
+        <div class="profile-details">
+            <h3>{{ current_user.name }}</h3>
+            <p>{{ current_user.email }}</p>
+            <span class="badge badge-issued">{{ current_user.role.title() }}</span>
+            <p class="text-muted" style="margin-top: 8px;">
+                Member since {{ current_user.created_at.strftime('%B %Y') }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="profile-stats">
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-number">{{ total_issued }}</div>
+            <div class="stat-label">Total Books Requested</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📖</div>
+            <div class="stat-number">{{ currently_issued }}</div>
+            <div class="stat-label">Currently Issued</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-number">{{ books_returned }}</div>
+            <div class="stat-label">Books Returned</div>
+        </div>
+    </div>
+
+    <!-- Links -->
+    <div class="form-actions" style="margin-top: 24px;">
+        <a href="{{ url_for('student.browse_books') }}" class="btn btn-primary">Browse Books</a>
+        <a href="{{ url_for('student.my_books') }}" class="btn btn-secondary">My Issued Books</a>
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-danger">Logout</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Login - Library MS{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <h1>Library Management System</h1>
+        <p class="auth-subtitle">Sign in to continue</p>
+
+        <form method="POST" action="{{ url_for('auth.login') }}" novalidate>
+            <!-- CSRF token for form security -->
+            <input type="hidden" name="csrf_token" value="{{ session.get('_csrf_token', '') }}">
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email"
+                       required maxlength="120">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password"
+                       required maxlength="200">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+        </form>
+
+        <p class="auth-link">
+            Don't have an account? <a href="{{ url_for('auth.register') }}">Register here</a>
+        </p>
+
+        <!-- Demo hint for testing -->
+        <div class="demo-hint">
+            <strong>Demo Admin:</strong> admin@library.com / admin123
+        </div>
+    </div>
+</div>
+{% endblock %}
