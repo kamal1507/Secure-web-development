@@ -1,5 +1,5 @@
 Library-Vulnerable - this is the Vulnerablity Code.
-appy.py - yhis is the solution for the code.
+appy.py - This is the solution for the code.
 
 Library Book Management System -SECURE Version.
 
